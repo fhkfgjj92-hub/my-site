@@ -5,31 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мой простой сайт</title>
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             text-align: center;
         }
-        h1 {
-            font-size: 3em;
-            margin-bottom: 0.5em;
+        .login-box, .content {
+            background: rgba(255,255,255,0.15);
+            padding: 40px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 90%;
         }
-        p {
-            font-size: 1.2em;
+        h1 { font-size: 2.2em; margin-bottom: 20px; }
+        p { font-size: 1.1em; margin-bottom: 10px; }
+        input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
         }
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            background: #fff;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        button:hover { background: #f0f0f0; transform: scale(1.02); }
+        .error { color: #ffcccc; margin-top: 10px; display: none; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div>
+    <!-- Форма входа -->
+    <div id="login" class="login-box">
+        <h1>🔒 Вход</h1>
+        <p>Введите пароль</p>
+        <input type="password" id="password" placeholder="Пароль" autofocus>
+        <button onclick="checkPassword()">Войти</button>
+        <p class="error" id="error">Неверный пароль</p>
+    </div>
+
+    <!-- Контент сайта (скрыт до входа) -->
+    <div id="content" class="content hidden">
         <h1>Привет! 👋</h1>
         <p>Это самый простой сайт.</p>
         <p>Создан специально для тебя.</p>
+        <br>
+        <button onclick="logout()" style="background:#ff6b6b;color:white;">Выйти</button>
     </div>
+
+    <script>
+        // Пароль
+        const CORRECT_PASSWORD = "123";
+
+        // Проверяем, был ли уже вход в этой сессии
+        if (sessionStorage.getItem("loggedIn") === "true") {
+            showContent();
+        }
+
+        function checkPassword() {
+            const input = document.getElementById("password").value;
+            if (input === CORRECT_PASSWORD) {
+                sessionStorage.setItem("loggedIn", "true");
+                showContent();
+            } else {
+                document.getElementById("error").style.display = "block";
+                document.getElementById("password").value = "";
+            }
+        }
+
+        function showContent() {
+            document.getElementById("login").classList.add("hidden");
+            document.getElementById("content").classList.remove("hidden");
+        }
+
+        function logout() {
+            sessionStorage.removeItem("loggedIn");
+            location.reload();
+        }
+
+        // Вход по Enter
+        document.getElementById("password").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") checkPassword();
+        });
+    </script>
 </body>
 </html>
